@@ -1,3 +1,6 @@
+let elements = document.getElementsByTagName("*");
+let parsed_time_eachday = [];
+let originalDisplay = [];
 const page_link = window.location.href;
 // const regex = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=month&course=\d+$/;
 // // const regex = /^https?:\/\/[a-zA-Z0-9.-]+(:\d+)?\/calendar\/view\.php\?view=month&course=\d+$/;
@@ -11,10 +14,25 @@ const regex = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=month&course
 const regex_v2 = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=month&course=2229+#$/;
 const regex_v3 = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=month&time=\d+&course=2229+$/;
 const regex_v4 = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=month&time=\d+&course=2229+#$/;
+//our course:2229 
 
-let parsed_time_eachday = [];
-let elements = document.getElementsByTagName("*");
-let originalDisplay = [];
+// https://m.lms.ulstu.ru/calendar/view.php?view=day&time=1701288000
+const regex_day = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=day&time=\d+$/;
+const regex_day_v2 = /^https:\/\/[a-zA-Z0-9.-]+\/calendar\/view\.php\?view=day&time=\d+#$/;
+
+if (regex_day.test(page_link) || regex_day_v2.test(page_link)) {
+    document.body.style.filter = "blur(20px)";
+    window.addEventListener('load', function () {
+        let divs_with_evnt_settings = Array.from(document.getElementsByClassName('event mt-3'));
+        divs_with_evnt_settings.forEach(div => {
+            if (div.getAttribute('data-course-id') == '2229') {
+                div.parentElement.style.display = 'none';
+            }
+        });
+        document.body.style.filter = "blur(0px)";
+    });
+}
+
 
 function remove_day_chng_links() {
     let day_change_a = Array.from(document.getElementsByClassName('aalink day'));
@@ -28,11 +46,11 @@ function remove_day_chng_links() {
 
 function modal_form_actions(els_for_modal_call) {
     let usr_name_surname = document.getElementsByClassName('value')[0].innerText; //get name and surname of current user
-    
+
     for (let i = 0; i < els_for_modal_call.length; i++) {
         // Set onclick event for each element
         els_for_modal_call[i].onclick = function () {
-            
+
             //don't show modal during load
             console.log(els_for_modal_call);
             setTimeout(function () {
@@ -74,7 +92,7 @@ function modal_form_actions(els_for_modal_call) {
                         }, 250);
                         document.getElementsByClassName('modal-content')[0].style.filter = "blur(0px)";
                     }, 1000);
-                    
+
 
 
                     if (document.querySelector('#new_save_btn_id') == null) {
@@ -212,14 +230,14 @@ function remove_arrows() {
     document.getElementsByClassName('current')[1].style.float = "left";
 }
 
-function hide_page_els(){
+function hide_page_els() {
     for (var i = 0; i < elements.length; i++) {
         originalDisplay[i] = elements[i].style.display;
         elements[i].style.display = "none";
     }
 }
 
-function show_page_els(){
+function show_page_els() {
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = originalDisplay[i];
     }
